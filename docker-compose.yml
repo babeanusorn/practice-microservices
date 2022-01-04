@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=practice
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8081:8080
+  nginx:
+    image: nginx:1.20-alpine
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "8080:80"
+    depends_on:
+      - postgres
+      - create
+      - get
+      - get-by-id
+      - update
+      - delete
+  create:
+    build: 
+      context: .
+      dockerfile: ./create/Dockerfile
+  get:
+    build: 
+      context: .
+      dockerfile: ./get/Dockerfile
+  get-by-id:
+    build: 
+      context: .
+      dockerfile: ./get-by-id/Dockerfile
+  update:
+    build: 
+      context: .
+      dockerfile: ./update/Dockerfile
+  delete:
+    build: 
+      context: .
+      dockerfile: ./delete/Dockerfile
+
+volumes:
+  pgdata:
